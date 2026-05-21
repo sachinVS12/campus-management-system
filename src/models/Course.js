@@ -1,24 +1,46 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-const couresSchema = new mongoose.Schema({
-  coursename: {
+const courseSchema = new mongoose.Schema({
+  courseCode: {
     type: String,
-    required: true,
+    required: [true, "Please add course code"],
+    unique: true,
   },
-  couresfee: {
+  courseName: {
     type: String,
-    required: true,
+    required: [true, "Please add course name"],
   },
-  couresduration: {
+  credits: {
     type: Number,
-    requird: true,
+    required: true,
+    min: 1,
+    max: 6,
+  },
+  instructor: {
+    type: String,
+    required: true,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  schedule: {
+    day: String,
+    time: String,
+    room: String,
+  },
+  capacity: {
+    type: Number,
+    default: 30,
+  },
+  enrolled: {
+    type: Number,
+    default: 0,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 
-// create model
-const course = mongoose.model("course", couresSchema);
-
-// exports module
-module.exports = module;
+module.exports = mongoose.model("Course", courseSchema);
