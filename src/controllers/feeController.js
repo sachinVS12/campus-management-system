@@ -1,6 +1,7 @@
 const Fee = require("../models/Fee");
 const Receipt = require("../models/Receipt");
 const User = require("../models/User");
+const company = require("../models/Company");
 
 // Generate unique receipt number
 const generateReceiptNumber = () => {
