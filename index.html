@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Registration Form</title>
+    <title>Colorful Campus Form</title>
 
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -23,19 +23,16 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
         padding: 30px;
+        background: linear-gradient(135deg, #141e30, #243b55);
       }
 
       .container {
-        width: 850px;
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
+        width: 900px;
         padding: 40px;
-        color: white;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border-radius: 25px;
+        background: white;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         animation: fadeIn 1s ease;
       }
 
@@ -53,13 +50,14 @@
       h1 {
         text-align: center;
         margin-bottom: 10px;
-        font-size: 34px;
+        color: #222;
+        font-size: 36px;
       }
 
       .subtitle {
         text-align: center;
-        margin-bottom: 30px;
-        color: #ddd;
+        margin-bottom: 35px;
+        color: #666;
       }
 
       .form-grid {
@@ -75,41 +73,84 @@
 
       .input-box label {
         margin-bottom: 8px;
-        font-size: 14px;
-        color: #ddd;
+        font-weight: 600;
+        color: #333;
       }
 
       .input-box input,
       .input-box select,
       .input-box textarea {
-        padding: 13px;
+        padding: 14px;
         border: none;
-        outline: none;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.15);
-        color: white;
+        border-radius: 14px;
         font-size: 15px;
+        color: #222;
+        outline: none;
         transition: 0.3s;
-      }
-
-      .input-box input::placeholder,
-      .input-box textarea::placeholder {
-        color: #ccc;
+        font-weight: 500;
       }
 
       .input-box input:focus,
       .input-box select:focus,
       .input-box textarea:focus {
-        background: rgba(255, 255, 255, 0.25);
-        box-shadow: 0 0 10px #00d4ff;
+        transform: scale(1.02);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
       }
 
-      select option {
-        color: black;
+      /* Different Colors */
+
+      .name {
+        background: #ffe0e6;
       }
 
-      .full-width {
-        grid-column: 1 / 3;
+      .email {
+        background: #e0f7fa;
+      }
+
+      .phone {
+        background: #fff3cd;
+      }
+
+      .dob {
+        background: #ede7f6;
+      }
+
+      .tenth {
+        background: #d4edda;
+      }
+
+      .puc {
+        background: #f8d7da;
+      }
+
+      .degree {
+        background: #d1ecf1;
+      }
+
+      .course {
+        background: #fff0b3;
+      }
+
+      .department {
+        background: #f3d9fa;
+      }
+
+      .year {
+        background: #c8e6c9;
+      }
+
+      .skills {
+        background: #ffe5b4;
+      }
+
+      .address {
+        background: #d6eaff;
+      }
+
+      .gender-box {
+        background: #f1f1f1;
+        padding: 15px;
+        border-radius: 14px;
       }
 
       .gender {
@@ -118,35 +159,35 @@
         margin-top: 10px;
       }
 
-      .gender label {
-        color: #eee;
+      .full-width {
+        grid-column: 1 / 3;
       }
 
       .btn {
         width: 100%;
-        padding: 15px;
+        padding: 16px;
+        margin-top: 25px;
         border: none;
-        border-radius: 14px;
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        border-radius: 15px;
+        background: linear-gradient(90deg, #ff512f, #dd2476);
         color: white;
-        font-size: 17px;
+        font-size: 18px;
         font-weight: 600;
         cursor: pointer;
-        margin-top: 20px;
         transition: 0.3s;
       }
 
       .btn:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 20px rgba(0, 198, 255, 0.6);
+        transform: scale(1.03);
+        box-shadow: 0 0 20px rgba(221, 36, 118, 0.5);
       }
 
       .message {
         text-align: center;
         margin-top: 20px;
-        color: #00ffbf;
         font-size: 18px;
-        font-weight: 500;
+        color: green;
+        font-weight: 600;
       }
 
       @media (max-width: 768px) {
@@ -159,6 +200,7 @@
         }
 
         .container {
+          width: 100%;
           padding: 25px;
         }
       }
@@ -167,39 +209,48 @@
 
   <body>
     <div class="container">
-      <h1>🎓 Campus Registration</h1>
-      <p class="subtitle">Fill in your academic and personal details</p>
+      <h1>🎓 Campus Registration Form</h1>
+      <p class="subtitle">Fill your personal and academic details</p>
 
       <form id="campusForm">
         <div class="form-grid">
-          <!-- Personal Details -->
-
           <div class="input-box">
             <label>Full Name</label>
             <input
               type="text"
               id="name"
-              placeholder="Enter your full name"
+              class="name"
+              placeholder="Enter your name"
               required
             />
           </div>
 
           <div class="input-box">
             <label>Email Address</label>
-            <input type="email" placeholder="Enter your email" required />
+            <input
+              type="email"
+              class="email"
+              placeholder="Enter your email"
+              required
+            />
           </div>
 
           <div class="input-box">
             <label>Phone Number</label>
-            <input type="tel" placeholder="Enter phone number" required />
+            <input
+              type="tel"
+              class="phone"
+              placeholder="Enter phone number"
+              required
+            />
           </div>
 
           <div class="input-box">
             <label>Date of Birth</label>
-            <input type="date" required />
+            <input type="date" class="dob" required />
           </div>
 
-          <div class="input-box full-width">
+          <div class="input-box full-width gender-box">
             <label>Gender</label>
 
             <div class="gender">
@@ -209,26 +260,39 @@
             </div>
           </div>
 
-          <!-- Academic Details -->
-
           <div class="input-box">
             <label>10th Percentage</label>
-            <input type="number" placeholder="Enter 10th %" required />
+            <input
+              type="number"
+              class="tenth"
+              placeholder="Enter 10th %"
+              required
+            />
           </div>
 
           <div class="input-box">
             <label>PUC / 12th Percentage</label>
-            <input type="number" placeholder="Enter PUC / 12th %" required />
+            <input
+              type="number"
+              class="puc"
+              placeholder="Enter PUC %"
+              required
+            />
           </div>
 
           <div class="input-box">
             <label>Degree Percentage / CGPA</label>
-            <input type="text" placeholder="Enter Degree %" required />
+            <input
+              type="text"
+              class="degree"
+              placeholder="Enter Degree %"
+              required
+            />
           </div>
 
           <div class="input-box">
             <label>Current Course</label>
-            <select required>
+            <select class="course" required>
               <option value="">Select Course</option>
               <option>BCA</option>
               <option>BSc</option>
@@ -242,7 +306,7 @@
 
           <div class="input-box">
             <label>Department</label>
-            <select required>
+            <select class="department" required>
               <option value="">Select Department</option>
               <option>Computer Science</option>
               <option>Electronics</option>
@@ -254,17 +318,30 @@
 
           <div class="input-box">
             <label>Year of Passing</label>
-            <input type="number" placeholder="Enter passing year" required />
+            <input
+              type="number"
+              class="year"
+              placeholder="Passing year"
+              required
+            />
           </div>
 
           <div class="input-box full-width">
             <label>Skills</label>
-            <input type="text" placeholder="HTML, CSS, JavaScript, Python..." />
+            <input
+              type="text"
+              class="skills"
+              placeholder="HTML, CSS, JavaScript, Python"
+            />
           </div>
 
           <div class="input-box full-width">
             <label>Address</label>
-            <textarea rows="4" placeholder="Enter your address"></textarea>
+            <textarea
+              rows="4"
+              class="address"
+              placeholder="Enter your address"
+            ></textarea>
           </div>
         </div>
 
@@ -283,8 +360,7 @@
 
         const name = document.getElementById("name").value;
 
-        message.innerHTML =
-          "✅ Registration Submitted Successfully, " + name + "!";
+        message.innerHTML = "✅ Registration Successful, " + name + "!";
 
         setTimeout(() => {
           message.innerHTML = "";
