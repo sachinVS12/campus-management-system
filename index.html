@@ -3,9 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Registration</title>
+    <title>Campus Registration Form</title>
 
-    <!-- Google Font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -20,55 +19,23 @@
       }
 
       body {
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #141e30, #243b55);
-        overflow: hidden;
-      }
-
-      /* Animated Circles */
-      body::before,
-      body::after {
-        content: "";
-        position: absolute;
-        width: 300px;
-        height: 300px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.08);
-        animation: float 8s infinite alternate;
-      }
-
-      body::before {
-        top: -80px;
-        left: -80px;
-      }
-
-      body::after {
-        bottom: -100px;
-        right: -80px;
-      }
-
-      @keyframes float {
-        from {
-          transform: translateY(0px);
-        }
-        to {
-          transform: translateY(30px);
-        }
+        background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+        padding: 30px;
       }
 
       .container {
-        position: relative;
-        width: 420px;
-        padding: 35px;
-        border-radius: 20px;
-        backdrop-filter: blur(15px);
+        width: 850px;
         background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
         border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 40px;
+        color: white;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        color: #fff;
         animation: fadeIn 1s ease;
       }
 
@@ -83,21 +50,30 @@
         }
       }
 
-      .container h2 {
+      h1 {
         text-align: center;
-        margin-bottom: 25px;
-        font-size: 30px;
-        font-weight: 600;
-        letter-spacing: 1px;
-        color: #fff;
+        margin-bottom: 10px;
+        font-size: 34px;
+      }
+
+      .subtitle {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #ddd;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
       }
 
       .input-box {
-        margin-bottom: 18px;
+        display: flex;
+        flex-direction: column;
       }
 
       .input-box label {
-        display: block;
         margin-bottom: 8px;
         font-size: 14px;
         color: #ddd;
@@ -106,13 +82,12 @@
       .input-box input,
       .input-box select,
       .input-box textarea {
-        width: 100%;
         padding: 13px;
         border: none;
         outline: none;
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.15);
-        color: #fff;
+        color: white;
         font-size: 15px;
         transition: 0.3s;
       }
@@ -130,56 +105,60 @@
       }
 
       select option {
-        color: #000;
+        color: black;
+      }
+
+      .full-width {
+        grid-column: 1 / 3;
       }
 
       .gender {
         display: flex;
         gap: 20px;
         margin-top: 10px;
-        color: #ddd;
       }
 
-      .gender input {
-        margin-right: 5px;
+      .gender label {
+        color: #eee;
       }
 
       .btn {
         width: 100%;
-        padding: 14px;
-        margin-top: 10px;
+        padding: 15px;
         border: none;
-        border-radius: 12px;
-        background: linear-gradient(90deg, #00d2ff, #3a7bd5);
+        border-radius: 14px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
         color: white;
         font-size: 17px;
         font-weight: 600;
         cursor: pointer;
-        transition: 0.4s;
+        margin-top: 20px;
+        transition: 0.3s;
       }
 
       .btn:hover {
-        transform: scale(1.03);
-        box-shadow: 0 0 20px rgba(0, 210, 255, 0.7);
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(0, 198, 255, 0.6);
       }
 
       .message {
         text-align: center;
         margin-top: 20px;
-        font-size: 16px;
-        color: #00ffae;
+        color: #00ffbf;
+        font-size: 18px;
         font-weight: 500;
       }
 
-      .icon {
-        text-align: center;
-        font-size: 55px;
-        margin-bottom: 10px;
-      }
+      @media (max-width: 768px) {
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
 
-      @media (max-width: 500px) {
+        .full-width {
+          grid-column: auto;
+        }
+
         .container {
-          width: 90%;
           padding: 25px;
         }
       }
@@ -188,63 +167,108 @@
 
   <body>
     <div class="container">
-      <div class="icon">🎓</div>
-
-      <h2>Campus Registration</h2>
+      <h1>🎓 Campus Registration</h1>
+      <p class="subtitle">Fill in your academic and personal details</p>
 
       <form id="campusForm">
-        <div class="input-box">
-          <label>Full Name</label>
-          <input type="text" id="name" placeholder="Enter your name" required />
-        </div>
+        <div class="form-grid">
+          <!-- Personal Details -->
 
-        <div class="input-box">
-          <label>Email Address</label>
-          <input
-            type="email"
-            id="email"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
+          <div class="input-box">
+            <label>Full Name</label>
+            <input
+              type="text"
+              id="name"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
 
-        <div class="input-box">
-          <label>Phone Number</label>
-          <input
-            type="tel"
-            id="phone"
-            placeholder="Enter your phone number"
-            required
-          />
-        </div>
+          <div class="input-box">
+            <label>Email Address</label>
+            <input type="email" placeholder="Enter your email" required />
+          </div>
 
-        <div class="input-box">
-          <label>Department</label>
-          <select id="department" required>
-            <option value="">Select Department</option>
-            <option>Computer Science</option>
-            <option>Electronics</option>
-            <option>Mechanical</option>
-            <option>Civil</option>
-            <option>Business Administration</option>
-          </select>
-        </div>
+          <div class="input-box">
+            <label>Phone Number</label>
+            <input type="tel" placeholder="Enter phone number" required />
+          </div>
 
-        <div class="input-box">
-          <label>Gender</label>
-          <div class="gender">
-            <label><input type="radio" name="gender" /> Male</label>
-            <label><input type="radio" name="gender" /> Female</label>
-            <label><input type="radio" name="gender" /> Other</label>
+          <div class="input-box">
+            <label>Date of Birth</label>
+            <input type="date" required />
+          </div>
+
+          <div class="input-box full-width">
+            <label>Gender</label>
+
+            <div class="gender">
+              <label><input type="radio" name="gender" /> Male</label>
+              <label><input type="radio" name="gender" /> Female</label>
+              <label><input type="radio" name="gender" /> Other</label>
+            </div>
+          </div>
+
+          <!-- Academic Details -->
+
+          <div class="input-box">
+            <label>10th Percentage</label>
+            <input type="number" placeholder="Enter 10th %" required />
+          </div>
+
+          <div class="input-box">
+            <label>PUC / 12th Percentage</label>
+            <input type="number" placeholder="Enter PUC / 12th %" required />
+          </div>
+
+          <div class="input-box">
+            <label>Degree Percentage / CGPA</label>
+            <input type="text" placeholder="Enter Degree %" required />
+          </div>
+
+          <div class="input-box">
+            <label>Current Course</label>
+            <select required>
+              <option value="">Select Course</option>
+              <option>BCA</option>
+              <option>BSc</option>
+              <option>BCom</option>
+              <option>BE</option>
+              <option>BTech</option>
+              <option>MCA</option>
+              <option>MBA</option>
+            </select>
+          </div>
+
+          <div class="input-box">
+            <label>Department</label>
+            <select required>
+              <option value="">Select Department</option>
+              <option>Computer Science</option>
+              <option>Electronics</option>
+              <option>Mechanical</option>
+              <option>Civil</option>
+              <option>Business Administration</option>
+            </select>
+          </div>
+
+          <div class="input-box">
+            <label>Year of Passing</label>
+            <input type="number" placeholder="Enter passing year" required />
+          </div>
+
+          <div class="input-box full-width">
+            <label>Skills</label>
+            <input type="text" placeholder="HTML, CSS, JavaScript, Python..." />
+          </div>
+
+          <div class="input-box full-width">
+            <label>Address</label>
+            <textarea rows="4" placeholder="Enter your address"></textarea>
           </div>
         </div>
 
-        <div class="input-box">
-          <label>Address</label>
-          <textarea rows="3" placeholder="Enter your address"></textarea>
-        </div>
-
-        <button type="submit" class="btn">Register Now</button>
+        <button type="submit" class="btn">Submit Registration</button>
       </form>
 
       <div class="message" id="message"></div>
@@ -259,11 +283,12 @@
 
         const name = document.getElementById("name").value;
 
-        message.innerHTML = "✅ Registration Successful, " + name + "!";
+        message.innerHTML =
+          "✅ Registration Submitted Successfully, " + name + "!";
 
         setTimeout(() => {
           message.innerHTML = "";
-        }, 4000);
+        }, 5000);
 
         form.reset();
       });
