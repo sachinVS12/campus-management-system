@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Colorful Campus Form</title>
+    <title>Campus Registration Form</title>
 
+    <!-- Google Font -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -28,10 +29,10 @@
       }
 
       .container {
-        width: 900px;
+        width: 950px;
+        background: white;
         padding: 40px;
         border-radius: 25px;
-        background: white;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         animation: fadeIn 1s ease;
       }
@@ -49,15 +50,15 @@
 
       h1 {
         text-align: center;
-        margin-bottom: 10px;
         color: #222;
+        margin-bottom: 10px;
         font-size: 36px;
       }
 
       .subtitle {
         text-align: center;
-        margin-bottom: 35px;
         color: #666;
+        margin-bottom: 35px;
       }
 
       .form-grid {
@@ -83,18 +84,18 @@
         padding: 14px;
         border: none;
         border-radius: 14px;
-        font-size: 15px;
-        color: #222;
         outline: none;
-        transition: 0.3s;
+        font-size: 15px;
         font-weight: 500;
+        transition: 0.3s;
+        color: #222;
       }
 
       .input-box input:focus,
       .input-box select:focus,
       .input-box textarea:focus {
         transform: scale(1.02);
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
       }
 
       /* Different Colors */
@@ -148,7 +149,7 @@
       }
 
       .gender-box {
-        background: #f1f1f1;
+        background: #f5f5f5;
         padding: 15px;
         border-radius: 14px;
       }
@@ -185,8 +186,8 @@
       .message {
         text-align: center;
         margin-top: 20px;
-        font-size: 18px;
         color: green;
+        font-size: 18px;
         font-weight: 600;
       }
 
@@ -214,13 +215,15 @@
 
       <form id="campusForm">
         <div class="form-grid">
+          <!-- Personal Details -->
+
           <div class="input-box">
             <label>Full Name</label>
             <input
               type="text"
               id="name"
               class="name"
-              placeholder="Enter your name"
+              placeholder="Enter your full name"
               required
             />
           </div>
@@ -250,22 +253,29 @@
             <input type="date" class="dob" required />
           </div>
 
+          <!-- Gender -->
+
           <div class="input-box full-width gender-box">
             <label>Gender</label>
 
             <div class="gender">
-              <label><input type="radio" name="gender" /> Male</label>
+              <label><input type="radio" name="gender" required /> Male</label>
               <label><input type="radio" name="gender" /> Female</label>
               <label><input type="radio" name="gender" /> Other</label>
             </div>
           </div>
+
+          <!-- Academic Details -->
 
           <div class="input-box">
             <label>10th Percentage</label>
             <input
               type="number"
               class="tenth"
-              placeholder="Enter 10th %"
+              placeholder="Enter 10th Percentage"
+              min="0"
+              max="100"
+              step="0.01"
               required
             />
           </div>
@@ -275,17 +285,23 @@
             <input
               type="number"
               class="puc"
-              placeholder="Enter PUC %"
+              placeholder="Enter PUC Percentage"
+              min="0"
+              max="100"
+              step="0.01"
               required
             />
           </div>
 
           <div class="input-box">
-            <label>Degree Percentage / CGPA</label>
+            <label>Degree Percentage</label>
             <input
-              type="text"
+              type="number"
               class="degree"
-              placeholder="Enter Degree %"
+              placeholder="Enter Degree Percentage"
+              min="0"
+              max="100"
+              step="0.01"
               required
             />
           </div>
@@ -321,7 +337,7 @@
             <input
               type="number"
               class="year"
-              placeholder="Passing year"
+              placeholder="Enter Passing Year"
               required
             />
           </div>
@@ -360,7 +376,8 @@
 
         const name = document.getElementById("name").value;
 
-        message.innerHTML = "✅ Registration Successful, " + name + "!";
+        message.innerHTML =
+          "✅ Registration Submitted Successfully, " + name + "!";
 
         setTimeout(() => {
           message.innerHTML = "";
