@@ -44,4 +44,10 @@ router.post("/fees/pay/:feeId", payFee);
 router.get("/fees/receipts", getUserReceipts);
 router.get("/fees/receipt/:id", getReceiptById);
 
+// Company & Placement
+router.get("/companies", getStudentCompanies);
+router.post("/companies/apply/:companyId", applyToCompany);
+router.get("/companies/applications", getStudentApplications);
+router.get("/companies/interviews", getStudentInterviews);
+
 module.exports = router;
