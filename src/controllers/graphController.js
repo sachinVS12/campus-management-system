@@ -4,27 +4,34 @@ const Course = require("../models/Course");
 const Enrollment = require("../models/Enrollment");
 const Fee = require("../models/Fee");
 const StudentCompany = require("../models/StudentCompany");
-const fs = require("fs");
-const path = require("path");
-const { createCanvas } = require("canvas");
-const Chart = require("chart.js/auto");
 const PDFDocument = require("pdfkit");
 const ExcelJS = require("exceljs");
 
-// Helper function to generate chart images
-const generateChartImage = async (graphData) => {
-  const width = 800;
-  const height = 400;
-  const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext("2d");
-
-  new Chart(ctx, {
-    type: graphData.type,
-    data: graphData.data,
-    options: graphData.options || {},
-  });
-
-  return canvas.toBuffer();
+// Helper function to generate graph data without canvas
+const generateGraphDataOnly = async (userId, category, filters, userRole) => {
+  switch (category) {
+    case "academic":
+      return await generateAcademicGraph(userId, filters, userRole);
+    case "fees":
+      return await generateFeesGraph(userId, filters, userRole);
+    case "placement":
+      return await generatePlacementGraph(userId, filters, userRole);
+    case "performance":
+      return await generatePerformanceGraph(userId, filters, userRole);
+    default:
+      return {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+        datasets: [
+          {
+            label: "Default Data",
+            data: [65, 59, 80, 81, 56, 55],
+            backgroundColor: "rgba(59, 130, 246, 0.5)",
+            borderColor: "rgb(59, 130, 246)",
+            borderWidth: 1,
+          },
+        ],
+      };
+  }
 };
 
 // @desc    Create custom graph
@@ -35,7 +42,7 @@ const createGraph = async (req, res) => {
     const { title, type, category, isPublic, filters } = req.body;
 
     // Generate graph data based on category and filters
-    let graphData = await generateGraphData(
+    let graphData = await generateGraphDataOnly(
       req.user._id,
       category,
       filters,
@@ -67,33 +74,7 @@ const createGraph = async (req, res) => {
   }
 };
 
-// Helper to generate graph data
-const generateGraphData = async (userId, category, filters, userRole) => {
-  switch (category) {
-    case "academic":
-      return await generateAcademicGraph(userId, filters, userRole);
-    case "fees":
-      return await generateFeesGraph(userId, filters, userRole);
-    case "placement":
-      return await generatePlacementGraph(userId, filters, userRole);
-    case "performance":
-      return await generatePerformanceGraph(userId, filters, userRole);
-    default:
-      return {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        datasets: [
-          {
-            label: "Default Data",
-            data: [65, 59, 80, 81, 56, 55],
-            backgroundColor: "rgba(59, 130, 246, 0.5)",
-            borderColor: "rgb(59, 130, 246)",
-            borderWidth: 1,
-          },
-        ],
-      };
-  }
-};
-
+// Generate Academic Graph
 const generateAcademicGraph = async (userId, filters, userRole) => {
   let enrollmentData;
 
@@ -120,11 +101,27 @@ const generateAcademicGraph = async (userId, filters, userRole) => {
     ]);
   }
 
-  const labels = enrollmentData.map((d) => `Month ${d._id}`);
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const labels = enrollmentData.map(
+    (d) => monthNames[d._id - 1] || `Month ${d._id}`,
+  );
   const data = enrollmentData.map((d) => d.count);
 
   return {
-    labels: labels.length ? labels : ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: labels.length ? labels : monthNames.slice(0, 6),
     datasets: [
       {
         label: "Course Enrollments",
@@ -138,6 +135,7 @@ const generateAcademicGraph = async (userId, filters, userRole) => {
   };
 };
 
+// Generate Fees Graph
 const generateFeesGraph = async (userId, filters, userRole) => {
   let feeQuery = {};
   if (userRole !== "manager") {
@@ -181,6 +179,7 @@ const generateFeesGraph = async (userId, filters, userRole) => {
   };
 };
 
+// Generate Placement Graph
 const generatePlacementGraph = async (userId, filters, userRole) => {
   let applicationQuery = {};
   if (userRole !== "manager") {
@@ -226,6 +225,7 @@ const generatePlacementGraph = async (userId, filters, userRole) => {
   };
 };
 
+// Generate Performance Graph
 const generatePerformanceGraph = async (userId, filters, userRole) => {
   // Example performance data - can be customized based on grades or metrics
   const performanceData = [
@@ -294,7 +294,7 @@ const getGraphById = async (req, res) => {
   }
 };
 
-// @desc    Download graph as image
+// @desc    Download graph as CSV/Excel/JSON
 // @route   GET /api/user/graphs/:id/download/:format
 // @access  Private
 const downloadGraph = async (req, res) => {
@@ -316,43 +316,7 @@ const downloadGraph = async (req, res) => {
         .json({ message: "Not authorized to download this graph" });
     }
 
-    const imageBuffer = await generateChartImage(graph);
-
     switch (format) {
-      case "png":
-        res.setHeader("Content-Type", "image/png");
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename=graph_${id}.png`,
-        );
-        res.send(imageBuffer);
-        break;
-
-      case "jpg":
-        res.setHeader("Content-Type", "image/jpeg");
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename=graph_${id}.jpg`,
-        );
-        res.send(imageBuffer);
-        break;
-
-      case "pdf":
-        const pdfDoc = new PDFDocument();
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename=graph_${id}.pdf`,
-        );
-
-        pdfDoc.pipe(res);
-        pdfDoc.fontSize(20).text(graph.title, { align: "center" });
-        pdfDoc.moveDown();
-        // Add image to PDF (simplified - would need proper image embedding)
-        pdfDoc.text(`Graph data: ${JSON.stringify(graph.data)}`);
-        pdfDoc.end();
-        break;
-
       case "csv":
         res.setHeader("Content-Type", "text/csv");
         res.setHeader(
@@ -360,11 +324,18 @@ const downloadGraph = async (req, res) => {
           `attachment; filename=graph_${id}.csv`,
         );
 
-        let csvData = "Labels,Data\n";
+        let csvData = "Labels";
+        graph.data.datasets.forEach((ds) => {
+          csvData += `,${ds.label}`;
+        });
+        csvData += "\n";
+
         graph.data.labels.forEach((label, index) => {
+          csvData += `${label}`;
           graph.data.datasets.forEach((dataset) => {
-            csvData += `${label},${dataset.data[index]}\n`;
+            csvData += `,${dataset.data[index]}`;
           });
+          csvData += "\n";
         });
         res.send(csvData);
         break;
@@ -373,19 +344,18 @@ const downloadGraph = async (req, res) => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet("Graph Data");
 
-        worksheet.columns = [
-          { header: "Labels", key: "label", width: 20 },
-          ...graph.data.datasets.map((ds) => ({
-            header: ds.label,
-            key: ds.label,
-            width: 15,
-          })),
+        // Add headers
+        const headers = [
+          "Labels",
+          ...graph.data.datasets.map((ds) => ds.label),
         ];
+        worksheet.addRow(headers);
 
+        // Add data rows
         graph.data.labels.forEach((label, index) => {
-          const row = { label };
+          const row = [label];
           graph.data.datasets.forEach((dataset) => {
-            row[dataset.label] = dataset.data[index];
+            row.push(dataset.data[index]);
           });
           worksheet.addRow(row);
         });
@@ -403,8 +373,19 @@ const downloadGraph = async (req, res) => {
         res.end();
         break;
 
+      case "json":
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader(
+          "Content-Disposition",
+          `attachment; filename=graph_${id}.json`,
+        );
+        res.json(graph);
+        break;
+
       default:
-        res.status(400).json({ message: "Unsupported format" });
+        res
+          .status(400)
+          .json({ message: "Unsupported format. Use csv, excel, or json" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -433,7 +414,7 @@ const updateGraph = async (req, res) => {
     // Regenerate data if filters changed
     let graphData = graph.data;
     if (filters && JSON.stringify(filters) !== JSON.stringify(graph.filters)) {
-      graphData = await generateGraphData(
+      graphData = await generateGraphDataOnly(
         req.user._id,
         graph.category,
         filters,
