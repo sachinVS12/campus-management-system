@@ -86,4 +86,35 @@ router.delete(
 );
 router.put("/interviews/:id/complete", completeInterview);
 
+// Add to existing managerRoutes.js
+const {
+  getManagerEnhancedDashboard,
+} = require("../controllers/managerDashboardController");
+
+const {
+  createGraph,
+  getUserGraphs,
+  getGraphById,
+  downloadGraph,
+  updateGraph,
+  deleteGraph,
+  bulkDeleteGraphs,
+  shareGraph,
+  getGraphStatistics,
+} = require("../controllers/graphController");
+
+// Add these routes to the router
+router.get("/dashboard/enhanced", getManagerEnhancedDashboard);
+
+// Graph Management for Manager
+router.post("/graphs", createGraph);
+router.get("/graphs", getUserGraphs);
+router.get("/graphs/statistics", getGraphStatistics);
+router.get("/graphs/:id", getGraphById);
+router.get("/graphs/:id/download/:format", downloadGraph);
+router.put("/graphs/:id", updateGraph);
+router.delete("/graphs/:id", deleteGraph);
+router.delete("/graphs/bulk-delete", bulkDeleteGraphs);
+router.put("/graphs/:id/share", shareGraph);
+
 module.exports = router;
