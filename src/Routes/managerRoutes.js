@@ -2,6 +2,9 @@ const express = require("express");
 const { protect } = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const {
+  getManagerEnhancedDashboard,
+} = require("../controllers/managerDashboardController");
+const {
   getManagerDashboard,
   getAllUsers,
   getAllCourses,
