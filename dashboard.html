@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Management Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f5f5f5;
+      }
+      .dashboard {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .header {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .graphs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+      .graph-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .graph-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+      .btn {
+        padding: 8px 16px;
+        margin-left: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .btn-primary {
+        background: #3b82f6;
+        color: white;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: white;
+      }
+      .btn-success {
+        background: #10b981;
+        color: white;
+      }
+      canvas {
+        max-height: 300px;
+      }
+      .controls {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+      }
+      select,
+      input {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard">
+      <div class="header">
+        <h1>Campus Management Dashboard</h1>
+        <div class="controls">
+          <select id="graphType">
+            <option value="bar">Bar Chart</option>
+            <option value="line">Line Chart</option>
+            <option value="pie">Pie Chart</option>
+            <option value="doughnut">Doughnut Chart</option>
+          </select>
+          <select id="graphCategory">
+            <option value="academic">Academic</option>
+            <option value="fees">Fees</option>
+            <option value="placement">Placement</option>
+            <option value="performance">Performance</option>
+          </select>
+          <button class="btn btn-primary" onclick="createGraph()">
+            Create Graph
+          </button>
+          <button class="btn btn-primary" onclick="refreshDashboard()">
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      <div class="stats-grid" id="statsContainer"></div>
+      <div class="graphs-grid" id="graphsContainer"></div>
+    </div>
+
+    <script>
+      const API_URL = "http://localhost:5000/api";
+      const token = localStorage.getItem("token"); // Set this after login
+
+      // Axios configuration
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // Load dashboard
+      async function loadDashboard() {
+        try {
+          const response = await axios.get(
+            `${API_URL}/user/dashboard/enhanced`,
+          );
+          const data = response.data;
+
+          displayStatistics(data.statistics);
+          displayGraphs(data.graphs);
+        } catch (error) {
+          console.error("Error loading dashboard:", error);
+        }
+      }
+
+      // Display statistics
+      function displayStatistics(stats) {
+        const container = document.getElementById("statsContainer");
+        container.innerHTML = "";
+
+        for (const [key, value] of Object.entries(stats)) {
+          const card = document.createElement("div");
+          card.className = "stat-card";
+          card.innerHTML = `
+                    <h3>${formatKey(key)}</h3>
+                    <p style="font-size: 24px; font-weight: bold; margin-top: 10px;">${value}</p>
+                `;
+          container.appendChild(card);
+        }
+      }
+
+      // Display graphs
+      function displayGraphs(graphs) {
+        const container = document.getElementById("graphsContainer");
+        container.innerHTML = "";
+
+        graphs.forEach((graph) => {
+          const graphCard = document.createElement("div");
+          graphCard.className = "graph-card";
+          graphCard.innerHTML = `
+                    <div class="graph-header">
+                        <h3>${graph.title}</h3>
+                        <div>
+                            <button class="btn btn-success" onclick="downloadGraph('${graph._id}', 'png')">PNG</button>
+                            <button class="btn btn-success" onclick="downloadGraph('${graph._id}', 'pdf')">PDF</button>
+                            <button class="btn btn-success" onclick="downloadGraph('${graph._id}', 'csv')">CSV</button>
+                            <button class="btn btn-danger" onclick="deleteGraph('${graph._id}')">Delete</button>
+                        </div>
+                    </div>
+                    <canvas id="graph-${graph._id}"></canvas>
+                `;
+          container.appendChild(graphCard);
+
+          // Render chart
+          renderChart(graph);
+        });
+      }
+
+      // Render chart using Chart.js
+      function renderChart(graph) {
+        const ctx = document
+          .getElementById(`graph-${graph._id}`)
+          .getContext("2d");
+        new Chart(ctx, {
+          type: graph.type,
+          data: graph.data,
+          options: graph.options,
+        });
+      }
+
+      // Create new graph
+      async function createGraph() {
+        const title = prompt("Enter graph title:", "My Graph");
+        if (!title) return;
+
+        const type = document.getElementById("graphType").value;
+        const category = document.getElementById("graphCategory").value;
+
+        try {
+          const response = await axios.post(`${API_URL}/user/graphs`, {
+            title,
+            type,
+            category,
+            isPublic: false,
+          });
+
+          alert("Graph created successfully!");
+          loadDashboard();
+        } catch (error) {
+          console.error("Error creating graph:", error);
+          alert("Error creating graph");
+        }
+      }
+
+      // Download graph
+      async function downloadGraph(graphId, format) {
+        try {
+          window.open(
+            `${API_URL}/user/graphs/${graphId}/download/${format}`,
+            "_blank",
+          );
+        } catch (error) {
+          console.error("Error downloading graph:", error);
+          alert("Error downloading graph");
+        }
+      }
+
+      // Delete graph
+      async function deleteGraph(graphId) {
+        if (!confirm("Are you sure you want to delete this graph?")) return;
+
+        try {
+          await axios.delete(`${API_URL}/user/graphs/${graphId}`);
+          alert("Graph deleted successfully!");
+          loadDashboard();
+        } catch (error) {
+          console.error("Error deleting graph:", error);
+          alert("Error deleting graph");
+        }
+      }
+
+      // Bulk delete graphs
+      async function bulkDeleteGraphs() {
+        const graphIds = prompt("Enter graph IDs separated by commas:");
+        if (!graphIds) return;
+
+        const ids = graphIds.split(",").map((id) => id.trim());
+
+        if (!confirm(`Delete ${ids.length} graphs?`)) return;
+
+        try {
+          await axios.delete(`${API_URL}/user/graphs/bulk-delete`, {
+            data: { graphIds: ids },
+          });
+          alert("Graphs deleted successfully!");
+          loadDashboard();
+        } catch (error) {
+          console.error("Error deleting graphs:", error);
+          alert("Error deleting graphs");
+        }
+      }
+
+      // Refresh dashboard
+      function refreshDashboard() {
+        loadDashboard();
+      }
+
+      // Helper function to format keys
+      function formatKey(key) {
+        return key
+          .replace(/([A-Z])/g, " $1")
+          .replace(/^./, (str) => str.toUpperCase())
+          .replace(/([a-z])([A-Z])/g, "$1 $2");
+      }
+
+      // Initial load
+      loadDashboard();
+
+      // Auto-refresh every 30 seconds
+      setInterval(refreshDashboard, 30000);
+    </script>
+  </body>
+</html>
