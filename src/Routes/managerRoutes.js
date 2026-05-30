@@ -2,9 +2,6 @@ const express = require("express");
 const { protect } = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const {
-  getManagerEnhancedDashboard,
-} = require("../controllers/managerDashboardController");
-const {
   getManagerDashboard,
   getAllUsers,
   getAllCourses,
@@ -42,6 +39,22 @@ const {
   completeInterview,
 } = require("../controllers/interviewController");
 
+const {
+  getManagerEnhancedDashboard,
+} = require("../controllers/managerDashboardController");
+
+const {
+  createGraph,
+  getUserGraphs,
+  getGraphById,
+  downloadGraph,
+  updateGraph,
+  deleteGraph,
+  bulkDeleteGraphs,
+  shareGraph,
+  getGraphStatistics,
+} = require("../controllers/graphController");
+
 const router = express.Router();
 
 // All routes require authentication and manager role
@@ -50,6 +63,7 @@ router.use(roleMiddleware("manager"));
 
 // Dashboard
 router.get("/dashboard", getManagerDashboard);
+router.get("/dashboard/enhanced", getManagerEnhancedDashboard);
 
 // User Management
 router.get("/users", getAllUsers);
@@ -88,26 +102,6 @@ router.delete(
   removeStudentFromInterview,
 );
 router.put("/interviews/:id/complete", completeInterview);
-
-// Add to existing managerRoutes.js
-const {
-  getManagerEnhancedDashboard,
-} = require("../controllers/managerDashboardController");
-
-const {
-  createGraph,
-  getUserGraphs,
-  getGraphById,
-  downloadGraph,
-  updateGraph,
-  deleteGraph,
-  bulkDeleteGraphs,
-  shareGraph,
-  getGraphStatistics,
-} = require("../controllers/graphController");
-
-// Add these routes to the router
-router.get("/dashboard/enhanced", getManagerEnhancedDashboard);
 
 // Graph Management for Manager
 router.post("/graphs", createGraph);
